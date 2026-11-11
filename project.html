@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyPort | Airport Companion</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      color: #17243a;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #102b4e;
+      color: white;
+      padding: 22px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #53d8c5;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .hero {
+      padding: 55px 7%;
+      color: white;
+      background: linear-gradient(120deg, #102b4e, #176d87);
+    }
+
+    .hero h1 {
+      font-size: clamp(30px, 5vw, 46px);
+      max-width: 700px;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .hero p {
+      color: #e0edf6;
+      max-width: 650px;
+      margin-bottom: 25px;
+    }
+
+    .container {
+      width: 86%;
+      max-width: 1200px;
+      margin: 35px auto;
+    }
+
+    .section-title {
+      font-size: 25px;
+      margin-bottom: 8px;
+    }
+
+    .section-description {
+      color: #65748b;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 15px;
+      box-shadow: 0 5px 22px rgba(25, 47, 80, 0.07);
+      margin-bottom: 24px;
+    }
+
+    .terminal-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    button, select, input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 9px;
+      padding: 12px 18px;
+      background: #126c91;
+      color: white;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
+
+    .terminal-btn {
+      background: #eaf0f7;
+      color: #173451;
+    }
+
+    .terminal-btn.active {
+      background: #126c91;
+      color: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .facility {
+      padding: 18px;
+      border: 1px solid #e4eaf2;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .facility .emoji {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .facility h3 {
+      font-size: 17px;
+      margin-bottom: 5px;
+    }
+
+    .facility p {
+      color: #65748b;
+      font-size: 14px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    input, select {
+      padding: 12px;
+      border: 1px solid #d7dfeb;
+      border-radius: 9px;
+      background: white;
+      min-width: 0;
+    }
+
+    .form-row input {
+      flex: 1;
+    }
+
+    .flight-result {
+      display: none;
+      margin-top: 22px;
+      padding: 20px;
+      background: #edf9f5;
+      border: 1px solid #c9eee0;
+      border-radius: 12px;
+    }
+
+    .flight-details {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .flight-details small {
+      display: block;
+      color: #63748a;
+    }
+
+    .flight-details strong {
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: #d9f6e9;
+      color: #17694e;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .lounge {
+      background: linear-gradient(140deg, #102b4e, #20577a);
+      color: white;
+    }
+
+    .lounge p {
+      color: #dce8f4;
+    }
+
+    .amenities {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 22px 0;
+    }
+
+    .amenities div {
+      background: rgba(255,255,255,0.1);
+      padding: 12px;
+      border-radius: 9px;
+    }
+
+    .price {
+      font-size: 30px;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    .price small {
+      font-size: 13px;
+      font-weight: normal;
+    }
+
+    .lounge button {
+      background: #53d8c5;
+      color: #102b4e;
+      font-weight: bold;
+    }
+
+    .directory-controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .directory-controls select,
+    .directory-controls input {
+      flex: 1;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .empty {
+      padding: 20px;
+      color: #65748b;
+      grid-column: 1 / -1;
+    }
+
+    footer {
+      background: #102b4e;
+      color: #dce8f4;
+      text-align: center;
+      padding: 25px 7%;
+      margin-top: 50px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flight-details {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .container {
+        width: 92%;
+      }
+    }
+
+    @media (max-width: 520px) {
+      header {
+        padding: 18px 5%;
+      }
+
+      nav {
+        gap: 12px;
+      }
+
+      .hero {
+        padding: 40px 5%;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .container {
+        width: 92%;
+      }
+
+      .amenities {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">✈️ Sky<span>Port</span></div>
+
+  <nav>
+    <a href="#terminals">Terminals</a>
+    <a href="#flights">Flights</a>
+    <a href="#lounge">Lounge Pass</a>
+    <a href="#directory">Shops & Dining</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Your Airport Journey, Made Easy.</h1>
+  <p>
+    Find departure gates, explore terminal facilities, discover
+    duty-free shopping and dining, and reserve your executive lounge pass.
+  </p>
+  <a href="#flights">
+    <button>Find My Flight →</button>
+  </a>
+</section>
+
+<main>
+
+  <!-- TERMINAL SELECTOR -->
+  <section class="container" id="terminals">
+    <h2 class="section-title">Explore Your Terminal</h2>
+    <p class="section-description">
+      Select a terminal to view its facilities and locations.
+    </p>
+
+    <div class="card">
+      <div class="terminal-buttons">
+        <button class="terminal-btn active"
+          data-terminal="T1"
+          onclick="selectTerminal('T1')">
+          Terminal 1 · Domestic
+        </button>
+
+        <button class="terminal-btn"
+          data-terminal="T2"
+          onclick="selectTerminal('T2')">
+          Terminal 2 · International
+        </button>
+      </div>
+
+      <h3 id="terminal-heading">Terminal 1 — Domestic Departures</h3>
+      <p id="terminal-info">
+        Domestic check-in, security screening and departure facilities.
+      </p>
+
+      <div class="grid" id="facility-grid" style="margin-top:20px;"></div>
+    </div>
+  </section>
+
+  <!-- FLIGHT LOOKUP -->
+  <section class="container" id="flights">
+    <h2 class="section-title">Departure Flight Status</h2>
+    <p class="section-description">
+      Enter a sample flight number to look up its departure details.
+    </p>
+
+    <div class="card">
+      <span class="tag">DEPARTURES</span>
+
+      <div class="form-row">
+        <input id="flight-input"
+          type="text"
+          placeholder="Enter flight number, e.g. AI101"
+          aria-label="Flight number">
+
+        <button onclick="searchFlight()">Search Flight</button>
+      </div>
+
+      <div class="flight-result" id="flight-result" aria-live="polite"></div>
+
+      <p class="section-description" style="margin-top:15px;margin-bottom:0;">
+        Demo data only. Flight times, gates and status are simulated and
+        are not connected to an actual airport.
+      </p>
+    </div>
+  </section>
+
+  <!-- LOUNGE PASS -->
+  <section class="container" id="lounge">
+    <h2 class="section-title">Executive Lounge Access</h2>
+    <p class="section-description">
+      Enjoy a comfortable stay while waiting for your departure.
+    </p>
+
+    <div class="card lounge">
+      <span class="tag">PREMIUM EXPERIENCE</span>
+      <h2 style="margin-top:15px;">SkyPort Executive Lounge</h2>
+      <p>Relax, refresh and recharge before your flight.</p>
+
+      <div class="amenities">
+        <div>🍽️ <strong>Buffet Meals</strong><br>
+          <small>Food and refreshments</small></div>
+
+        <div>📶 <strong>High-Speed Wi-Fi</strong><br>
+          <small>Stay connected</small></div>
+
+        <div>🚿 <strong>Shower Facilities</strong><br>
+          <small>Freshen up before boarding</small></div>
+
+        <div>🛋️ <strong>Recliner Pods</strong><br>
+          <small>Rest in comfort</small></div>
+      </div>
+
+      <label for="lounge-terminal">Choose terminal</label>
+      <br>
+
+      <select id="lounge-terminal"
+        style="width:100%;margin-top:8px;">
+        <option value="T1">Terminal 1 — Domestic</option>
+        <option value="T2">Terminal 2 — International</option>
+      </select>
+
+      <div class="price">₹1,499 <small>/ person · demo price</small></div>
+
+      <button onclick="bookLounge()">Reserve Lounge Pass</button>
+      <div id="booking-message" class="message" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- SHOPS AND DINING -->
+  <section class="container" id="directory">
+    <h2 class="section-title">Airport Shops & Dining</h2>
+    <p class="section-description">
+      Discover duty-free shopping, cafes and restaurants by terminal.
+    </p>
+
+    <div class="card">
+      <div class="directory-controls">
+        <input type="text" id="shop-search"
+          placeholder="Search shops, food or facilities..."
+          aria-label="Search airport directory"
+          oninput="renderDirectory()">
+
+        <select id="shop-terminal"
+          aria-label="Filter by terminal"
+          onchange="renderDirectory()">
+          <option value="T1">Terminal 1 — Domestic</option>
+          <option value="T2">Terminal 2 — International</option>
+          <option value="ALL">All Terminals</option>
+        </select>
+
+        <select id="shop-category"
+          aria-label="Filter by category"
+          onchange="renderDirectory()">
+          <option value="ALL">All Categories</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Dining">Dining</option>
+          <option value="Facility">Facilities</option>
+        </select>
+      </div>
+
+      <div class="grid" id="directory-grid"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p><strong>SkyPort Airport Companion</strong></p>
+  <p>Academic frontend project · HTML, CSS and JavaScript</p>
+  <p>All flight information, prices and booking confirmations are simulated.</p>
+</footer>
+
+<script>
+  // TERMINAL FACILITIES
+  const facilities = {
+    T1: [
+      {
+        icon: "🛫",
+        name: "Domestic Departures",
+        location: "Level 2 · Check-in Hall"
+      },
+      {
+        icon: "🛂",
+        name: "Security Check",
+        location: "Level 2 · After Check-in"
+      },
+      {
+        icon: "🚻",
+        name: "Restrooms",
+        location: "Near Gates 3 and 6"
+      },
+      {
+        icon: "🧳",
+        name: "Baggage Services",
+        location: "Arrivals · Level 1"
+      },
+      {
+        icon: "🏥",
+        name: "Medical Assistance",
+        location: "Level 1 · Help Desk"
+      },
+      {
+        icon: "ℹ️",
+        name: "Information Desk",
+        location: "Main Departure Hall"
+      }
+    ],
+
+    T2: [
+      {
+        icon: "🌍",
+        name: "International Departures",
+        location: "Level 3 · Departure Hall"
+      },
+      {
+        icon: "🛂",
+        name: "Immigration",
+        location: "After Security Screening"
+      },
+      {
+        icon: "🛍️",
+        name: "Duty-Free Zone",
+        location: "Airside · Gates 10–18"
+      },
+      {
+        icon: "🚿",
+        name: "Shower Facilities",
+        location: "Near Executive Lounge"
+      },
+      {
+        icon: "🧳",
+        name: "Baggage Claim",
+        location: "Arrivals · Level 1"
+      },
+      {
+        icon: "ℹ️",
+        name: "International Help Desk",
+        location: "Main Arrival Hall"
+      }
+    ]
+  };
+
+  let currentTerminal = "T1";
+
+  function selectTerminal(terminal) {
+    currentTerminal = terminal;
+
+    document.querySelectorAll(".terminal-btn").forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.terminal === terminal
+      );
+    });
+
+    document.getElementById("terminal-heading").textContent =
+      terminal === "T1"
+        ? "Terminal 1 — Domestic Departures"
+        : "Terminal 2 — International Departures";
+
+    document.getElementById("terminal-info").textContent =
+      terminal === "T1"
+        ? "Explore domestic check-in, security screening and departure facilities."
+        : "Explore international departures, immigration and duty-free facilities.";
+
+    document.getElementById("lounge-terminal").value = terminal;
+
+    document.getElementById("facility-grid").innerHTML =
+      facilities[terminal].map(item => `
+        <div class="facility">
+          <div class="emoji">${item.icon}</div>
+          <h3>${item.name}</h3>
+          <p>📍 ${item.location}</p>
+        </div>
+      `).join("");
+
+    renderDirectory();
+  }
+
+  // SIMULATED FLIGHT DATABASE
+  const flights = {
+    AI101: {
+      number: "AI101",
+      destination: "Delhi",
+      time: "09:30 AM",
+      gate: "A12",
+      terminal: "T1",
+      status: "Scheduled"
+    },
+    6E205: {
+      number: "6E205",
+      destination: "Mumbai",
+      time: "11:15 AM",
+      gate: "B04",
+      terminal: "T1",
+      status: "Scheduled"
+    },
+    UK955: {
+      number: "UK955",
+      destination: "Bengaluru",
+      time: "01:45 PM",
+      gate: "A08",
+      terminal: "T1",
+      status: "On Time"
+    },
+    AI301: {
+      number: "AI301",
+      destination: "London",
+      time: "06:20 PM",
+      gate: "C15",
+      terminal: "T2",
+      status: "Scheduled"
+    },
+    EK512: {
+      number: "EK512",
+      destination: "Dubai",
+      time: "08:10 PM",
+      gate: "C09",
+      terminal: "T2",
+      status: "On Time"
+    }
+  };
+
+  function searchFlight() {
+    const number = document.getElementById("flight-input")
+      .value.trim().toUpperCase();
+
+    const result = document.getElementById("flight-result");
+    result.style.display = "block";
+
+    if (!number) {
+      result.innerHTML = "<strong>Please enter a flight number.</strong>";
+      return;
+    }
+
+    const flight = flights[number];
+
+    if (!flight) {
+      result.innerHTML = `
+        <strong>Flight not found.</strong>
+        <p>Please try AI101, 6E205, UK955, AI301 or EK512.</p>
+      `;
+      return;
+    }
+
+    result.innerHTML = `
+      <span class="tag">${flight.status}</span>
+      <div class="flight-details">
+        <div>
+          <small>Flight Number</small>
+          <strong>${flight.number}</strong>
+        </div>
+        <div>
+          <small>Destination</small>
+          <strong>${flight.destination}</strong>
+        </div>
+        <div>
+          <small>Scheduled Departure</small>
+          <strong>${flight.time}</strong>
+        </div>
+        <div>
+          <small>Boarding Gate</small>
+          <strong>${flight.gate}</strong>
+        </div>
+      </div>
+      <p style="margin-top:15px;">
+        Terminal: ${flight.terminal === "T1"
+          ? "Terminal 1 — Domestic"
+          : "Terminal 2 — International"}
+      </p>
+      <p><small>Simulated data — confirm actual flight details with your airline.</small></p>
+    `;
+  }
+
+  // SIMULATED LOUNGE BOOKING
+  function bookLounge() {
+    const terminal =
+      document.getElementById("lounge-terminal").value;
+
+    const bookingMessage =
+      document.getElementById("booking-message");
+
+    const demoBookingId = "SP" +
+      Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    bookingMessage.innerHTML = `
+      <strong>Demo booking confirmed!</strong><br>
+      Reference: ${demoBookingId}<br>
+      Terminal: ${terminal === "T1" ? "Terminal 1" : "Terminal 2"}<br>
+      Demo price: ₹1,499 per person.<br>
+      <small>This is a local demonstration only. No actual reservation or payment has occurred.</small>
+    `;
+  }
+
+  // SHOPS, DINING AND FACILITY DIRECTORY
+  const directory = [
+    {
+      icon: "🛍️",
+      name: "Global Duty Free",
+      category: "Shopping",
+      terminal: "T2",
+      location: "Airside · Zone C"
+    },
+    {
+      icon: "☕",
+      name: "Sky Cafe",
+      category: "Dining",
+      terminal: "T1",
+      location: "Departure Hall · Zone A"
+    },
+    {
+      icon: "🍔",
+      name: "Airport Food Court",
+      category: "Dining",
+      terminal: "T1",
+      location: "Level 2 · Zone B"
+    },
+    {
+      icon: "🧴",
+      name: "Travel Essentials",
+      category: "Shopping",
+      terminal: "T1",
+      location: "Near Gate A12"
+    },
+    {
+      icon: "🍕",
+      name: "International Bistro",
+      category: "Dining",
+      terminal: "T2",
+      location: "Airside · Zone D"
+    },
+    {
+      icon: "🎁",
+      name: "Travel Gifts",
+      category: "Shopping",
+      terminal: "T2",
+      location: "Departure Hall · Zone C"
+    },
+    {
+      icon: "🛋️",
+      name: "Executive Lounge",
+      category: "Facility",
+      terminal: "T1",
+      location: "Near Gate A08"
+    },
+    {
+      icon: "🛋️",
+      name: "International Lounge",
+      category: "Facility",
+      terminal: "T2",
+      location: "Near Gate C15"
+    },
+    {
+      icon: "ℹ️",
+      name: "Passenger Help Desk",
+      category: "Facility",
+      terminal: "T1",
+      location: "Main Departure Hall"
+    }
+  ];
+
+  function renderDirectory() {
+    const query = document.getElementById("shop-search")
+      .value.trim().toLowerCase();
+
+    const terminal =
+      document.getElementById("shop-terminal").value;
+
+    const category =
+      document.getElementById("shop-category").value;
+
+    const filtered = directory.filter(item => {
+      const matchesTerminal =
+        terminal === "ALL" || item.terminal === terminal;
+
+      const matchesCategory =
+        category === "ALL" || item.category === category;
+
+      const matchesQuery =
+        (item.name + " " + item.location + " " + item.category)
+          .toLowerCase().includes(query);
+
+      return matchesTerminal && matchesCategory && matchesQuery;
+    });
+
+    const grid = document.getElementById("directory-grid");
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div class="empty">
+          No matching outlets found. Try another search.
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(item => `
+      <div class="facility">
+        <div class="emoji">${item.icon}</div>
+        <h3>${item.name}</h3>
+        <p>${item.category}</p>
+        <p>📍 ${item.location}</p>
+        <p>Terminal: ${item.terminal}</p>
+      </div>
+    `).join("");
+  }
+
+  // INITIALIZE THE APPLICATION
+  selectTerminal("T1");
+  renderDirectory();
+
+  // Allow Enter to search flights.
+  document.getElementById("flight-input")
+    .addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        searchFlight();
+      }
+    });
+</script>
+
+</body>
+</html>
